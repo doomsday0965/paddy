@@ -1,0 +1,19 @@
+{
+  "name": "@paddy/agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Paddy AI payments clerk: plain language -> validated payment intent -> policy pre-check -> session-key userOp",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types src/server.ts",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "live": "node --experimental-strip-types scripts/live-run.ts",
+    "audit": "node --experimental-strip-types scripts/audit.ts"
+  },
+  "dependencies": {
+    "viem": "2.21.54",
+    "zod": "3.23.8"
+  }
+}

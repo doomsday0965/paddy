@@ -17,3 +17,14 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: gitleaks/gitleaks-action@v2
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: recursive }
+      - uses: foundry-rs/foundry-toolchain@v1
+      - run: forge build            # ABIs in out/ are read by the agent
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: cd bundler && npm install && npm test
+      - run: cd agent && npm install && npm test   # offline; live Gemini tests skip without GEMINI_LIVE
