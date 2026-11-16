@@ -1,0 +1,15 @@
+# Foundry
+out/
+cache/
+broadcast/*/31337/
+# Secrets: never commit keys
+.env
+.env.*
+!.env.example
+*.key
+# Node (later)
+node_modules/
+.next/
+dist/
+coverage/
+lcov.info
