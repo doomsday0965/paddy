@@ -1,0 +1,83 @@
+{
+  "chainId": 44005,
+  "account": "0xf74269212d041589Fe7B2930428012CBcb4f60Dc",
+  "clerk": "0x15573Aa1e7d31db1b5600286e723Fd6F011baC42",
+  "payee": "0x0C9bce6c93765Ad41243141f936A4eA59A04272F",
+  "attacker": "0x000000000000000000000000000000000000bad1",
+  "paymaster": "0x9942FBa932735EFf9B55D8948701AEF5218491b5",
+  "results": [
+    {
+      "step": "0. Owner funds the SME smart account with 0.2 tUSD8",
+      "tx": "0x2270d8d316ce2f3475584ea44eef02d94b3f3c90bcd8049007def87b14af90ca",
+      "link": "https://explorer-test.qday.info/tx/0x2270d8d316ce2f3475584ea44eef02d94b3f3c90bcd8049007def87b14af90ca"
+    },
+    {
+      "step": "1. Owner opens AI-clerk session (cap 0.05, daily 0.10, total 0.30 tUSD8, 7 days, verified payee only)",
+      "userOpHash": "0x4d7fc60854f54b90f199f61c07f443937bffc1d82f97aab6ae7e872cc7f7e65c",
+      "tx": "0xc253ff3a3e45a40abf7b8ef7b0c46ee3102c0a1cef3618dfb760ae01d989ce59",
+      "link": "https://explorer-test.qday.info/tx/0xc253ff3a3e45a40abf7b8ef7b0c46ee3102c0a1cef3618dfb760ae01d989ce59",
+      "success": true,
+      "events": [
+        "SessionCreated",
+        "SessionPayeeSet"
+      ]
+    },
+    {
+      "step": "2. Clerk pays approved supplier 0.02 tUSD8 (within cap)",
+      "userOpHash": "0xd497cdbcb9f2e9079db8a190ebc60da15e5349d7b1af0bacba5a2061156deaa3",
+      "tx": "0x022065c45e8b179547ce7d813a5e19a594ad27ba1b78bcac87adbfa29f09e7b9",
+      "link": "https://explorer-test.qday.info/tx/0x022065c45e8b179547ce7d813a5e19a594ad27ba1b78bcac87adbfa29f09e7b9",
+      "success": true,
+      "events": [
+        "SessionPayment"
+      ]
+    },
+    {
+      "step": "3. POISONED INVOICE: fooled clerk tries to send 0.09 tUSD8 (900 scaled 1:10,000) to attacker 0x...bAD1",
+      "userOpHash": "0x0f14c8feeff4bc2e9428db4e97cf30026ab706dcd6e1768cce451f7c9de22579",
+      "tx": "0xb77be6fceb3dd4b90b3df403548c37562f6a533fe0ea3353da64c9e4876646e4",
+      "link": "https://explorer-test.qday.info/tx/0xb77be6fceb3dd4b90b3df403548c37562f6a533fe0ea3353da64c9e4876646e4",
+      "success": true,
+      "events": [
+        "SessionActionBlocked"
+      ]
+    },
+    {
+      "step": "4a. Clerk pays supplier 0.06 tUSD8 (over the 0.05 cap) -> queued for owner",
+      "userOpHash": "0x18f10955bedbacb1766dbaef3319ac552036c4af0f91b20f922a239a3300b7da",
+      "tx": "0x3ce890e6e920a6fe8649c2e5171bcfb5f0ff520c8bd0ee3ff8cc74193193b7fb",
+      "link": "https://explorer-test.qday.info/tx/0x3ce890e6e920a6fe8649c2e5171bcfb5f0ff520c8bd0ee3ff8cc74193193b7fb",
+      "success": true,
+      "events": [
+        "ApprovalRequested"
+      ]
+    },
+    {
+      "step": "4b. Owner approves request #1",
+      "userOpHash": "0xd5190b96ec9fcd38fcb2039e74cfabffbc99be218b9de432a783b10046c00089",
+      "tx": "0x0396d12f226355aafceb7540e07fb90f843f3667c855c4d1e2944e1ee6a6a4aa",
+      "link": "https://explorer-test.qday.info/tx/0x0396d12f226355aafceb7540e07fb90f843f3667c855c4d1e2944e1ee6a6a4aa",
+      "success": true,
+      "events": [
+        "RequestApproved"
+      ]
+    },
+    {
+      "step": "5. Owner revokes the clerk directly from their wallet",
+      "tx": "0x3a0b78c4bacdd12dee93538542bea3b9779b34a6b754341cd3929516d7d9fef5",
+      "link": "https://explorer-test.qday.info/tx/0x3a0b78c4bacdd12dee93538542bea3b9779b34a6b754341cd3929516d7d9fef5",
+      "events": [
+        "SessionRevoked"
+      ]
+    },
+    {
+      "step": "6. Revoked clerk tries 0.01 tUSD8 -> rejected before reaching the chain",
+      "rejected": "AA24 signature error"
+    }
+  ],
+  "balances": {
+    "account": "0.12",
+    "payee": "0.1797",
+    "attacker": "0"
+  }
+}

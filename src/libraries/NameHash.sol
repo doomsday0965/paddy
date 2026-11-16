@@ -12,7 +12,7 @@ library NameHash {
     function normalize(string memory name) internal pure returns (bytes memory out) {
         bytes memory raw = bytes(name);
         out = new bytes(raw.length);
-        uint256 n;
+        uint256 n = 0;
         for (uint256 i; i < raw.length; ++i) {
             bytes1 c = raw[i];
             if (c >= 0x41 && c <= 0x5A) {
