@@ -20,10 +20,10 @@ export async function indexAccount(
   abi: Abi,
   account: Address,
   fromBlock: bigint,
-  opts: { chunk?: bigint; names?: Record<string, string> } = {},
+  opts: { chunk?: bigint; names?: Record<string, string>; toBlock?: bigint } = {},
 ): Promise<AuditEntry[]> {
   const chunk = opts.chunk ?? 1_000n; // Aevum RPC caps eth_getLogs at 1000 blocks
-  const latest = await pub.getBlockNumber();
+  const latest = opts.toBlock ?? (await pub.getBlockNumber());
   const entries: AuditEntry[] = [];
   const times = new Map<bigint, string>();
   const nm = (a: unknown) => opts.names?.[String(a).toLowerCase()] ?? short(a);

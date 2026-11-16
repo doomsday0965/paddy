@@ -1,0 +1,156 @@
+{
+ "contractName": "PaddyAccountFactory",
+ "abi": [
+  {
+   "type": "constructor",
+   "inputs": [
+    {
+     "name": "entryPoint_",
+     "type": "address",
+     "internalType": "contract IEntryPoint"
+    },
+    {
+     "name": "token_",
+     "type": "address",
+     "internalType": "contract IERC20"
+    },
+    {
+     "name": "book_",
+     "type": "address",
+     "internalType": "contract InvoiceBook"
+    },
+    {
+     "name": "registry_",
+     "type": "address",
+     "internalType": "contract IPayeeRegistry"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "book",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract InvoiceBook"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "createAccount",
+   "inputs": [
+    {
+     "name": "owner",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "salt",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "account",
+     "type": "address",
+     "internalType": "contract PaddyAccount"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "entryPoint",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IEntryPoint"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "getAddress",
+   "inputs": [
+    {
+     "name": "owner",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "salt",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "registry",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IPayeeRegistry"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "token",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IERC20"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "event",
+   "name": "AccountCreated",
+   "inputs": [
+    {
+     "name": "account",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "owner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "salt",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  }
+ ]
+}

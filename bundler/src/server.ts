@@ -90,4 +90,4 @@ createServer(async (req, res) => {
     const message = e instanceof Error ? e.message : String(e);
     res.end(JSON.stringify({ jsonrpc: "2.0", id, error: { code, message } }));
   }
-}).listen(port, () => console.log(`Paddy bundler on :${port}, relayer ${account.address}, entryPoint ${ENTRY_POINT_V07}`));
+}).listen(port, process.env.HOST ?? "127.0.0.1", () => console.log(`Paddy bundler on ${process.env.HOST ?? "127.0.0.1"}:${port}, relayer ${account.address}, entryPoint ${ENTRY_POINT_V07}`));

@@ -1,0 +1,951 @@
+{
+ "contractName": "InvoiceBook",
+ "abi": [
+  {
+   "type": "constructor",
+   "inputs": [
+    {
+     "name": "token_",
+     "type": "address",
+     "internalType": "contract IERC20"
+    },
+    {
+     "name": "registry_",
+     "type": "address",
+     "internalType": "contract IPayeeRegistry"
+    },
+    {
+     "name": "initialOwner",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "MAX_FEE_BPS",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint16",
+     "internalType": "uint16"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "acceptOwnership",
+   "inputs": [],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "authorizationNonce",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "from",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint128",
+     "internalType": "uint128"
+    },
+    {
+     "name": "salt",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "cancelInvoice",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "createInvoice",
+   "inputs": [
+    {
+     "name": "payer",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint128",
+     "internalType": "uint128"
+    },
+    {
+     "name": "dueDate",
+     "type": "uint64",
+     "internalType": "uint64"
+    },
+    {
+     "name": "ref",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    },
+    {
+     "name": "metadataHash",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    },
+    {
+     "name": "allowPartial",
+     "type": "bool",
+     "internalType": "bool"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "feeBps",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint16",
+     "internalType": "uint16"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "feeRecipient",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "getInvoice",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "tuple",
+     "internalType": "struct InvoiceBook.Invoice",
+     "components": [
+      {
+       "name": "payeeId",
+       "type": "uint256",
+       "internalType": "uint256"
+      },
+      {
+       "name": "payer",
+       "type": "address",
+       "internalType": "address"
+      },
+      {
+       "name": "amount",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "paid",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "issuedAt",
+       "type": "uint64",
+       "internalType": "uint64"
+      },
+      {
+       "name": "dueDate",
+       "type": "uint64",
+       "internalType": "uint64"
+      },
+      {
+       "name": "confirmedAt",
+       "type": "uint64",
+       "internalType": "uint64"
+      },
+      {
+       "name": "feeBps",
+       "type": "uint16",
+       "internalType": "uint16"
+      },
+      {
+       "name": "allowPartial",
+       "type": "bool",
+       "internalType": "bool"
+      },
+      {
+       "name": "status",
+       "type": "uint8",
+       "internalType": "enum InvoiceBook.Status"
+      },
+      {
+       "name": "ref",
+       "type": "bytes32",
+       "internalType": "bytes32"
+      },
+      {
+       "name": "metadataHash",
+       "type": "bytes32",
+       "internalType": "bytes32"
+      }
+     ]
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "getReceipt",
+   "inputs": [
+    {
+     "name": "receiptId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "tuple",
+     "internalType": "struct InvoiceBook.Receipt",
+     "components": [
+      {
+       "name": "invoiceId",
+       "type": "uint256",
+       "internalType": "uint256"
+      },
+      {
+       "name": "payer",
+       "type": "address",
+       "internalType": "address"
+      },
+      {
+       "name": "paidTo",
+       "type": "address",
+       "internalType": "address"
+      },
+      {
+       "name": "amount",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "fee",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "paidAt",
+       "type": "uint64",
+       "internalType": "uint64"
+      },
+      {
+       "name": "method",
+       "type": "uint8",
+       "internalType": "enum InvoiceBook.Method"
+      }
+     ]
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "invoiceCount",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "invoiceIdByRef",
+   "inputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "owner",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "pay",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "amount",
+     "type": "uint128",
+     "internalType": "uint128"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "receiptId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "payWithAuthorization",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "from",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint128",
+     "internalType": "uint128"
+    },
+    {
+     "name": "validAfter",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "validBefore",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "salt",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    },
+    {
+     "name": "v",
+     "type": "uint8",
+     "internalType": "uint8"
+    },
+    {
+     "name": "r",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    },
+    {
+     "name": "s",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "receiptId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "payability",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "payer",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "code",
+     "type": "uint8",
+     "internalType": "uint8"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "pendingOwner",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "receiptCount",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "reconfirmInvoice",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "registry",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IPayeeRegistry"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "remaining",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "renounceOwnership",
+   "inputs": [],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "setFee",
+   "inputs": [
+    {
+     "name": "newFeeBps",
+     "type": "uint16",
+     "internalType": "uint16"
+    },
+    {
+     "name": "recipient",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "token",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IERC20"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "transferOwnership",
+   "inputs": [
+    {
+     "name": "newOwner",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "event",
+   "name": "FeeUpdated",
+   "inputs": [
+    {
+     "name": "feeBps",
+     "type": "uint16",
+     "indexed": false,
+     "internalType": "uint16"
+    },
+    {
+     "name": "feeRecipient",
+     "type": "address",
+     "indexed": false,
+     "internalType": "address"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "InvoiceCancelled",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "InvoiceCreated",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "payeeId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "payer",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "dueDate",
+     "type": "uint64",
+     "indexed": false,
+     "internalType": "uint64"
+    },
+    {
+     "name": "ref",
+     "type": "bytes32",
+     "indexed": false,
+     "internalType": "bytes32"
+    },
+    {
+     "name": "metadataHash",
+     "type": "bytes32",
+     "indexed": false,
+     "internalType": "bytes32"
+    },
+    {
+     "name": "allowPartial",
+     "type": "bool",
+     "indexed": false,
+     "internalType": "bool"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "InvoicePaid",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "onTime",
+     "type": "bool",
+     "indexed": false,
+     "internalType": "bool"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "InvoiceReconfirmed",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "wallet",
+     "type": "address",
+     "indexed": false,
+     "internalType": "address"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "OwnershipTransferStarted",
+   "inputs": [
+    {
+     "name": "previousOwner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "newOwner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "OwnershipTransferred",
+   "inputs": [
+    {
+     "name": "previousOwner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "newOwner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "PaymentReceived",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "receiptId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "payer",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "paidTo",
+     "type": "address",
+     "indexed": false,
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "fee",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "totalPaid",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "method",
+     "type": "uint8",
+     "indexed": false,
+     "internalType": "enum InvoiceBook.Method"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "ReputationUpdateFailed",
+   "inputs": [
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "error",
+   "name": "AlreadyPartiallyPaid",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "CooldownActive",
+   "inputs": [
+    {
+     "name": "until",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "DuplicateRef",
+   "inputs": [
+    {
+     "name": "existingInvoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "FeeTooHigh",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "InvalidAmount",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "InvalidDueDate",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "InvalidRef",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "NotAuthorizedPayer",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "NotIssuer",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "NotOpen",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "NotRegisteredPayee",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "Overpayment",
+   "inputs": [
+    {
+     "name": "remaining",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "OwnableInvalidOwner",
+   "inputs": [
+    {
+     "name": "owner",
+     "type": "address",
+     "internalType": "address"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "OwnableUnauthorizedAccount",
+   "inputs": [
+    {
+     "name": "account",
+     "type": "address",
+     "internalType": "address"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "PartialNotAllowed",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "PayeeIsSuspended",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "ReentrancyGuardReentrantCall",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "SafeERC20FailedOperation",
+   "inputs": [
+    {
+     "name": "token",
+     "type": "address",
+     "internalType": "address"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "UnknownInvoice",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "WalletChangedSinceIssue",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "ZeroAddress",
+   "inputs": []
+  }
+ ]
+}

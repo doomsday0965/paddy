@@ -1,4 +1,4 @@
-import { createPublicClient, http, type Hex } from "viem";
+import { createPublicClient, http, type Address, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { join } from "node:path";
 import { OnChainView } from "./chain.ts";
@@ -13,27 +13,30 @@ export interface AgentResult {
 }
 
 /** Wires the planner, Gemini, the chain view and the executor. */
-export function createAgent(opts: { sessionKey: Hex; log?: (m: string) => void; journal?: string }) {
+export function createAgent(opts: { sessionKey?: Hex; sessionAddress?: Address; log?: (m: string) => void; journal?: string; llm?: GeminiClient }) {
   const pub = createPublicClient({ transport: http(DEPLOYMENT.rpcUrl, { retryCount: 3 }) });
-  const session = privateKeyToAccount(opts.sessionKey);
+  const signer = opts.sessionKey ? privateKeyToAccount(opts.sessionKey) : null;
+  const sessionAddress = (signer?.address ?? opts.sessionAddress) as Address;
+  if (!sessionAddress) throw new Error("sessionKey or sessionAddress required");
   const chain = new OnChainView(DEPLOYMENT, pub as never);
-  const llm = new GeminiClient({
+  const llm = opts.llm ?? new GeminiClient({
     apiKey: process.env.GEMINI_API_KEY || undefined,
     models: process.env.GEMINI_MODELS?.split(",").map((s) => s.trim()).filter(Boolean),
     rpm: Number(process.env.GEMINI_RPM ?? 10),
     dailyCap: Number(process.env.GEMINI_DAILY_CAP ?? 200),
     log: opts.log,
   });
-  const executor = new Executor(pub as never, session, opts.journal ?? join(REPO_ROOT, "agent", "data", "journal.json"));
+  // read-only (demo) agents have no signer and can only dry-run
+  const executor = signer ? new Executor(pub as never, signer, opts.journal ?? join(REPO_ROOT, "agent", "data", "journal.json")) : null;
   const contacts = loadContacts();
 
   return {
-    sessionAddress: session.address,
+    sessionAddress,
     llm,
     async handle(req: PayRequest, { dryRun = false } = {}): Promise<AgentResult> {
-      const p = await plan(req, { chain, contacts, sessionKey: session.address, account: DEPLOYMENT.account, ngnPerUsd: NGN_PER_USD, llm: llm.enabled ? llm : null });
-      if (dryRun || (p.decision !== "execute" && p.decision !== "queue_for_owner")) return { plan: p };
-      return { plan: p, execution: await executor.execute(p) };
+      const p = await plan(req, { chain, contacts, sessionKey: sessionAddress, account: DEPLOYMENT.account, ngnPerUsd: NGN_PER_USD, llm: llm.enabled ? llm : null });
+      if (dryRun || !executor || (p.decision !== "execute" && p.decision !== "queue_for_owner")) return { plan: p };
+      return { plan: p, execution: await executor!.execute(p) };
     },
   };
 }

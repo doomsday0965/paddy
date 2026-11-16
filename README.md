@@ -21,7 +21,7 @@ African SMEs pay suppliers and staff and chase invoices over WhatsApp and bank a
 | `PaddyAccount` + `PaddyAccountFactory` | ERC-4337 (EntryPoint v0.7) smart account. The AI clerk gets a **session key** limited to approved payees, a per-payment cap, a daily budget, a total budget and an expiry. Anything over a limit goes to an owner approval queue. One-tap revoke. Audit events for every action, blocked attempts included | ✅ built, tested, **live** |
 | `PaddyPaymaster` + `bundler/` | Gas sponsorship (per-account daily allowance, per-op ceiling) plus our own minimal EntryPoint v0.7 bundler (JSON-RPC, simulate-before-send, idempotent, retries). The SME account holds **0 tQDAY** | ✅ built, tested, **live** |
 | Agent service | Plain language → strict payment-intent JSON → policy pre-check → userOp, or owner approval. Invoice text is treated as data, never as instructions (prompt-injection safe) | ✅ live (`agent/`) |
-| Web app (PWA) | Owner console, agent chat, QR pay page, audit trail with explorer links | ⏳ |
+| Web app (PWA) | Owner console, agent chat, QR pay page, audit trail with explorer links | ✅ running locally (`web/`) |
 
 ```mermaid
 flowchart LR
@@ -243,6 +243,71 @@ npm run live                                 # the live run above (needs the bun
 npm run audit                                # plain-language audit trail
 ```
 
+## Owner console and pay page (`web/`)
+The web app is mobile-first: it's built for an owner on a phone. The Paddy server (`agent/src/server.ts`) serves it together with the API. **Keys never reach the browser.** The owner key, relayer, merchant, demo customer and every session key live only on the server. The browser holds at most an owner token.
+
+| Chat | Approvals | Limits | Activity | Customer pay page | Judge demo |
+|---|---|---|---|---|---|
+| ![chat](docs/screens/chat-poisoned-invoice.png) | ![approvals](docs/screens/approvals.png) | ![limits](docs/screens/limits.png) | ![activity](docs/screens/activity.png) | ![pay](docs/screens/pay-page.png) | ![demo](docs/screens/judge-demo.png) |
+
+- **Chat:**
+  - Talk to Paddy in English or Pidgin, and paste an invoice or forwarded message (shown as *untrusted data*).
+  - Each reply is a decision card: the decision, the payee with an on-chain name check, the amount with a ₦ estimate, the red flags as plain-language chips, and a link to the transaction.
+  - "Preview only" decides without paying.
+  - "How much I fit spend today?" gets an answer from live chain state.
+- **Approvals:** the account's on-chain `ApprovalRequest`s, each with an expiry countdown and **Approve** / **Reject** buttons behind a confirmation sheet. Either choice is sent as a gas-sponsored owner userOp through the bundler.
+- **Limits:**
+  - Shows the live session: key, per-payment cap, spent today against the daily budget, spent against the total, expiry countdown in WAT, and allowed payees with their CoP status.
+  - A big **Revoke Paddy now** button revokes the session.
+  - **Open a new session** mints a fresh key on the server (keys are single-use) and sends `createSession`.
+- **Activity:** the audit trail indexed from `PaddyAccount` events, with a receipt link to the explorer on every line.
+- **Get paid → `/pay/:id`:**
+  - The verified merchant issues an on-chain invoice and gets a QR code, rendered locally.
+  - The public pay page shows the merchant's on-chain verification and track record.
+  - The customer pays **without gas**: their wallet signs an EIP-3009 `ReceiveWithAuthorization` bound to this invoice and amount (`InvoiceBook.authorizationNonce`). The server verifies it, simulates it, then relays `payWithAuthorization`.
+  - Works with any injected wallet (MetaMask, Rabby, Coinbase Wallet in-app browsers), plus a one-tap "test customer" button for judges.
+- **Judge demo (`/demo`):** a 60-second replay of the poisoned-invoice story built from **real recorded Aevum transactions** (`docs/live-demo.json`, `docs/agent-live-run.json`). Nothing is sent while it plays.
+- **`DEMO_MODE=1`:** a read-only server for hosting. It uses live chain reads and real policy decisions (the chat dry-runs against the live session), and **simulates every write**. It needs no keys.
+
+
+**Live run of the console on Aevum (Mon Nov 16, 2026, about 11:35–11:40 WAT; driven by `web/e2e/screens.mjs`)**
+
+| Step | Tx |
+|---|---|
+| Pidgin chat → Paddy pays 0.01 tUSD8 (session key) | [`0x03c4bdc6…`](https://explorer-test.qday.info/tx/0x03c4bdc6aa553f816bf0cbf3b3773fb7d0724d9566d8eac5c83775d0d41449dd) |
+| ₦60 over cap → on-chain approval request #4 | [`0x5a5056fb…`](https://explorer-test.qday.info/tx/0x5a5056fbeaa89d16b80ca2e003f9b424b423a2a9c73ce515d1d834fe2ca1dc7b) |
+| Owner taps Reject (owner userOp) | [`0x1380ae2a…`](https://explorer-test.qday.info/tx/0x1380ae2ad9564837eab53219d3ff842cadfaa6bb6182276d1d305eacc8696f82) |
+| Owner taps Revoke Paddy now | [`0xdc2f655e…`](https://explorer-test.qday.info/tx/0xdc2f655e98e4d6c88daad010f466e17e69c96178dba3316da20c64b721b4483c) |
+| Owner opens a new session (fresh server-side key) | [`0x382cfa8f…`](https://explorer-test.qday.info/tx/0x382cfa8fe792e4c369ce901d337a1bd53780e8ee76a5b34a24274feb9e39a64e) |
+| Get paid: merchant issues invoice #4 (0.01) | [`0x40b9f0b5…`](https://explorer-test.qday.info/tx/0x40b9f0b5d1d17c7395046a91970acfe2923bc8f2724f176e956b2775fb193fc3) |
+| Pay page: customer with 0 tQDAY pays invoice #4 gaslessly (EIP-3009, relayed) | [`0xbed97e09…`](https://explorer-test.qday.info/tx/0xbed97e09c2e146587eaebb1253ceb9969fa53ca7174e6f5cc19ae51b4ef727e9) |
+
+**Security model**
+- Owner endpoints need `OWNER_TOKEN` (bearer, constant-time compare). With no token set, the server only trusts loopback callers and refuses to listen on a public interface.
+- Public endpoints (invoice view, authorization, relay, demo pay) are rate-limited and strictly validated. A signature that doesn't match the invoice and amount is rejected before any gas is spent.
+- Session keys sit in `agent/data/sessions.json` (chmod 600, gitignored).
+- Headers: a strict CSP (`script-src 'self'`, `connect-src 'self'`, `frame-ancestors 'none'`), no-referrer, nosniff and DENY framing.
+- The server waits for the public RPC to catch up to each owner op's block before answering, so the UI never shows stale state.
+
+```bash
+cd web && npm install && npm run build                    # -> web/dist, served by the Paddy server
+cd ../bundler && BUNDLER_PRIVATE_KEY=<testnet> npm start  # :4337 (binds 127.0.0.1)
+cd ../agent && PRIVATE_KEY=<owner, testnet> MERCHANT_PRIVATE_KEY=<verified payee> \
+  DEMO_CUSTOMER_PRIVATE_KEY=<test customer> GEMINI_API_KEY=<optional> npm start   # http://127.0.0.1:8787
+DEMO_MODE=1 HOST=0.0.0.0 npm start                        # read-only judge mode, no keys
+cd ../web && npm test                                      # unit tests (vitest)
+LIVE=1 OUT=../screens npm run e2e                          # phone-sized end-to-end walkthrough + screenshots
+```
+
+**Docker** (written and linted with hadolint 2.12 and the compose-spec schema; not built yet):
+- `docker compose --env-file ../.env up --build` runs the bundler and the Paddy server: read-only root, all capabilities dropped, a `/data` volume, and the console published on 127.0.0.1 only.
+- `docker compose --profile demo up --build paddy-demo` runs the key-free judge demo.
+
+**Hosting (not deployed).** The simplest public option is the key-free `DEMO_MODE=1` container on a free Docker host:
+- **Render** free web service: 750 h a month, sleeps after 15 min idle, about a minute to wake, no persistent disk.
+- **Koyeb** free instance: 512 MB, scales to zero after 1 h idle.
+- A live-mode deployment with keys needs persistent storage for the session keystore and the bundler as a second service. That means a paid tier, or a Cloudflare Tunnel (free) to a machine running `docker compose`.
+
 ## Run it
 
 ```bash
@@ -287,7 +352,9 @@ src/PaddyAccount.sol         ERC-4337 account with AI session keys, approval que
 src/PaddyAccountFactory.sol  CREATE2 factory (usable as userOp factory)
 src/PaddyPaymaster.sol       gas sponsorship with per-account limits
 bundler/                     minimal EntryPoint v0.7 bundler + live demo script
-agent/                       AI clerk: intent extraction, policy pre-check, executor, indexer, HTTP API
+agent/                       AI clerk + Paddy server: intent extraction, policy pre-check, executor, indexer, owner/pay API
+web/                         React owner console, customer pay page, judge demo (Vite); e2e/screens.mjs walkthrough
+Dockerfile, docker-compose.yml  container build (bundler + server, key-free demo profile)
 docs/agent-live-run.json     record of the live agent run
 docs/live-demo.json          machine-readable record of the live demo
 tools/check-bytecode.py      deployed-bytecode match check
@@ -306,7 +373,7 @@ broadcast/                   Foundry deployment and smoke-test records for chain
 ## Roadmap
 - [x] Session-key smart account + paymaster + bundler (ERC-4337 v0.7), live on Aevum
 - [x] Agent service with an injection-resistant intent pipeline (Gemini structured output + rules fallback), live on Aevum
-- [ ] PWA: owner console, chat, QR pay page, audit trail
+- [x] Mobile web app: owner console (chat, approvals, limits, revoke, audit), QR pay page with gasless payments, judge demo
 - [ ] `@paddy/guardrails` TypeScript package (NameHash, CoP lookup, EIP-3009 helpers)
 - [ ] Mainnet (QDay Q1 2027): swap in QDay's paymaster, bundler and SDK; hybrid ML-DSA owner keys when the Phase-2 precompiles land
 

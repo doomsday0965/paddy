@@ -28,3 +28,12 @@ jobs:
         with: { node-version: 24 }
       - run: cd bundler && npm install && npm test
       - run: cd agent && npm install && npm test   # offline; live Gemini tests skip without GEMINI_LIVE
+      - run: cd web && npm ci && npm test && npm run build
+  docker-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with: { dockerfile: Dockerfile }
+      - run: docker compose config --quiet
+        env: { BUNDLER_PRIVATE_KEY: "0x00", OWNER_TOKEN: "ci" }

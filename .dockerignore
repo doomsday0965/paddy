@@ -1,0 +1,16 @@
+# never send secrets or local state into the build context
+.env
+.env.*
+!.env.example
+*.key
+**/data/
+.git
+**/node_modules
+web/dist
+out
+cache
+lib
+broadcast
+coverage
+screens
+*.recovery.lock

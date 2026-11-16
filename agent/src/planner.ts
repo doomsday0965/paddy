@@ -177,7 +177,8 @@ export async function plan(req: PayRequest, d: PlannerDeps): Promise<Plan> {
 
   // 8. any red flag on untrusted content => hold for the owner (never auto-pay)
   if (flags.some((f) => /^(injection|llm|foreign-address|amount-)/.test(f))) {
-    return out("needs_owner_review", `Holding ${amount.display} to ${contact.legalName} for your review: the invoice or memo contains red flags (${flags.join(", ")}).`, { payee, amount, call });
+    const n = flags.filter((f) => /^(injection|llm|foreign-address|amount-)/.test(f)).length;
+    return out("needs_owner_review", `I'm holding ${amount.display} to ${contact.legalName} for you to check. I found ${n} red flag${n === 1 ? "" : "s"} in the invoice or message, so I won't pay it on my own. If it's genuine, confirm with them by phone first.`, { payee, amount, call });
   }
 
   // 9. limits (mirrors the on-chain rules; the account enforces them anyway)

@@ -5,6 +5,7 @@ import { entryPoint07Abi } from "viem/account-abstraction";
 import { signAsSession, toRpc, type UserOp } from "../../bundler/src/userop.ts";
 import { DEPLOYMENT, loadAbi } from "./config.ts";
 import type { Plan } from "./planner.ts";
+import { waitForBlock } from "./owner.ts";
 
 export interface ExecutionResult {
   planId: Hex;
@@ -64,6 +65,7 @@ export class Executor {
     const signed = await signAsSession(op, this.session, this.d.chainId);
     const userOpHash = (await rpc(this.d.bundlerUrl, "eth_sendUserOperation", [toRpc(signed), this.d.entryPoint])) as Hex;
     const r = await rpc(this.d.bundlerUrl, "eth_getUserOperationReceipt", [userOpHash]);
+    await waitForBlock(this.pub, BigInt(r.receipt.blockNumber));
     const events = decodeAccountEvents(this.abi, this.d.account, r.logs);
     const result: ExecutionResult = { planId: p.id, userOpHash, tx: r.receipt.transactionHash, success: r.success, events };
     this.journal[p.id] = result;
@@ -89,7 +91,7 @@ export function decodeAccountEvents(abi: Abi, account: Address, logs: { address:
 
 let rpcId = 1;
 async function rpc(url: string, method: string, params: unknown[]): Promise<any> {
-  const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: rpcId++, method, params }) });
+  const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json", ...(process.env.BUNDLER_TOKEN ? { authorization: `Bearer ${process.env.BUNDLER_TOKEN}` } : {}) }, body: JSON.stringify({ jsonrpc: "2.0", id: rpcId++, method, params }) });
   const j = await res.json();
   if (j.error) throw Object.assign(new Error(`bundler: ${j.error.message}`), { code: j.error.code });
   return j.result;

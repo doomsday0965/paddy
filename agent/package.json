@@ -10,7 +10,8 @@
     "start": "node --experimental-strip-types src/server.ts",
     "test": "node --experimental-strip-types --test test/*.test.ts",
     "live": "node --experimental-strip-types scripts/live-run.ts",
-    "audit": "node --experimental-strip-types scripts/audit.ts"
+    "audit": "node --experimental-strip-types scripts/audit.ts",
+    "abi": "node --experimental-strip-types scripts/export-abis.ts"
   },
   "dependencies": {
     "viem": "2.21.54",

@@ -1,0 +1,75 @@
+# Local stack: `docker compose --env-file ../.env up --build` (the .env lives OUTSIDE the repo).
+# Judge-safe read-only demo: `docker compose --profile demo up --build paddy-demo` (no keys needed).
+name: paddy
+
+x-image: &image
+  build:
+    context: .
+  image: paddy:local
+  restart: unless-stopped
+  read_only: true
+  tmpfs:
+    - /tmp
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+
+services:
+  bundler:
+    <<: *image
+    command: ["node", "--experimental-strip-types", "bundler/src/server.ts"]
+    environment:
+      HOST: 0.0.0.0
+      PORT: "4337"
+      RPC_URL: ${RPC_URL:-https://rpc-test.qday.info}
+      BUNDLER_PRIVATE_KEY: ${BUNDLER_PRIVATE_KEY:?BUNDLER_PRIVATE_KEY (testnet relayer key) is required}
+      BUNDLER_TOKEN: ${BUNDLER_TOKEN:-}
+    expose:
+      - "4337"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- --header 'content-type: application/json' --post-data '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_chainId\",\"params\":[]}' http://127.0.0.1:4337 >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  paddy:
+    <<: *image
+    depends_on:
+      bundler:
+        condition: service_healthy
+    environment:
+      RPC_URL: ${RPC_URL:-https://rpc-test.qday.info}
+      BUNDLER_URL: http://bundler:4337
+      BUNDLER_TOKEN: ${BUNDLER_TOKEN:-}
+      OWNER_TOKEN: ${OWNER_TOKEN:?OWNER_TOKEN is required to expose the owner console}
+      OWNER_PRIVATE_KEY: ${OWNER_PRIVATE_KEY:-}
+      RELAYER_PRIVATE_KEY: ${RELAYER_PRIVATE_KEY:-}
+      MERCHANT_PRIVATE_KEY: ${MERCHANT_PRIVATE_KEY:-}
+      DEMO_CUSTOMER_PRIVATE_KEY: ${DEMO_CUSTOMER_PRIVATE_KEY:-}
+      CLERK_PRIVATE_KEY: ${CLERK_PRIVATE_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_RPM: ${GEMINI_RPM:-10}
+      GEMINI_DAILY_CAP: ${GEMINI_DAILY_CAP:-200}
+      NGN_PER_USD: ${NGN_PER_USD:-1500}
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - paddy-data:/data
+
+  # Read-only judge demo: live chain reads, every write simulated, chat never signs. Safe to host publicly.
+  paddy-demo:
+    <<: *image
+    profiles: ["demo"]
+    environment:
+      DEMO_MODE: "1"
+      RPC_URL: ${RPC_URL:-https://rpc-test.qday.info}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_RPM: ${GEMINI_RPM:-5}
+      GEMINI_DAILY_CAP: ${GEMINI_DAILY_CAP:-100}
+      DEMO_SESSION_ADDRESS: ${DEMO_SESSION_ADDRESS:-}
+    ports:
+      - "8788:8787"
+
+volumes:
+  paddy-data:

@@ -1,14 +1,17 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import type { Abi, Address } from "viem";
 import type { Contact } from "./names.ts";
 
-const here = dirname(fileURLToPath(import.meta.url));
+export const here = dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = join(here, "..", "..");
 
+/** ABIs: committed copies in agent/abi (refresh with `npm run abi` after forge build), else Foundry's out/. */
 export function loadAbi(name: string): Abi {
-  return JSON.parse(readFileSync(join(REPO_ROOT, "out", `${name}.sol`, `${name}.json`), "utf8")).abi as Abi;
+  const committed = join(here, "..", "abi", `${name}.json`);
+  const path = existsSync(committed) ? committed : join(REPO_ROOT, "out", `${name}.sol`, `${name}.json`);
+  return JSON.parse(readFileSync(path, "utf8")).abi as Abi;
 }
 
 /** Live Aevum Testnet deployment (see README). */

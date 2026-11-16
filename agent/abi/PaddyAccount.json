@@ -1,0 +1,1041 @@
+{
+ "contractName": "PaddyAccount",
+ "abi": [
+  {
+   "type": "constructor",
+   "inputs": [
+    {
+     "name": "entryPoint_",
+     "type": "address",
+     "internalType": "contract IEntryPoint"
+    },
+    {
+     "name": "owner_",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "token_",
+     "type": "address",
+     "internalType": "contract IERC20"
+    },
+    {
+     "name": "book_",
+     "type": "address",
+     "internalType": "contract InvoiceBook"
+    },
+    {
+     "name": "registry_",
+     "type": "address",
+     "internalType": "contract IPayeeRegistry"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "receive",
+   "stateMutability": "payable"
+  },
+  {
+   "type": "function",
+   "name": "MAX_PENDING_PER_SESSION",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "REQUEST_TTL",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint64",
+     "internalType": "uint64"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "addDeposit",
+   "inputs": [],
+   "outputs": [],
+   "stateMutability": "payable"
+  },
+  {
+   "type": "function",
+   "name": "approveRequest",
+   "inputs": [
+    {
+     "name": "requestId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "book",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract InvoiceBook"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "createSession",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "internalType": "string"
+    },
+    {
+     "name": "validAfter",
+     "type": "uint48",
+     "internalType": "uint48"
+    },
+    {
+     "name": "validUntil",
+     "type": "uint48",
+     "internalType": "uint48"
+    },
+    {
+     "name": "perPaymentCap",
+     "type": "uint128",
+     "internalType": "uint128"
+    },
+    {
+     "name": "dailyBudget",
+     "type": "uint128",
+     "internalType": "uint128"
+    },
+    {
+     "name": "totalBudget",
+     "type": "uint128",
+     "internalType": "uint128"
+    },
+    {
+     "name": "requireVerifiedPayee",
+     "type": "bool",
+     "internalType": "bool"
+    },
+    {
+     "name": "payees",
+     "type": "address[]",
+     "internalType": "address[]"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "entryPoint",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IEntryPoint"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "execute",
+   "inputs": [
+    {
+     "name": "target",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "value",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "data",
+     "type": "bytes",
+     "internalType": "bytes"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "executeBatch",
+   "inputs": [
+    {
+     "name": "targets",
+     "type": "address[]",
+     "internalType": "address[]"
+    },
+    {
+     "name": "values",
+     "type": "uint256[]",
+     "internalType": "uint256[]"
+    },
+    {
+     "name": "datas",
+     "type": "bytes[]",
+     "internalType": "bytes[]"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "getNonce",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "getRequest",
+   "inputs": [
+    {
+     "name": "requestId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "tuple",
+     "internalType": "struct PaddyAccount.ApprovalRequest",
+     "components": [
+      {
+       "name": "kind",
+       "type": "uint8",
+       "internalType": "enum PaddyAccount.RequestKind"
+      },
+      {
+       "name": "status",
+       "type": "uint8",
+       "internalType": "enum PaddyAccount.RequestStatus"
+      },
+      {
+       "name": "limit",
+       "type": "uint8",
+       "internalType": "enum PaddyAccount.LimitHit"
+      },
+      {
+       "name": "sessionKey",
+       "type": "address",
+       "internalType": "address"
+      },
+      {
+       "name": "payee",
+       "type": "address",
+       "internalType": "address"
+      },
+      {
+       "name": "amount",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "createdAt",
+       "type": "uint64",
+       "internalType": "uint64"
+      },
+      {
+       "name": "invoiceId",
+       "type": "uint256",
+       "internalType": "uint256"
+      },
+      {
+       "name": "ref",
+       "type": "bytes32",
+       "internalType": "bytes32"
+      }
+     ]
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "getSession",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "tuple",
+     "internalType": "struct PaddyAccount.Session",
+     "components": [
+      {
+       "name": "validAfter",
+       "type": "uint48",
+       "internalType": "uint48"
+      },
+      {
+       "name": "validUntil",
+       "type": "uint48",
+       "internalType": "uint48"
+      },
+      {
+       "name": "revoked",
+       "type": "bool",
+       "internalType": "bool"
+      },
+      {
+       "name": "requireVerifiedPayee",
+       "type": "bool",
+       "internalType": "bool"
+      },
+      {
+       "name": "perPaymentCap",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "dailyBudget",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "totalBudget",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "spentToday",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "totalSpent",
+       "type": "uint128",
+       "internalType": "uint128"
+      },
+      {
+       "name": "day",
+       "type": "uint32",
+       "internalType": "uint32"
+      },
+      {
+       "name": "pending",
+       "type": "uint32",
+       "internalType": "uint32"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "internalType": "string"
+      }
+     ]
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "isSessionLive",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "bool",
+     "internalType": "bool"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "isSessionPayee",
+   "inputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "bool",
+     "internalType": "bool"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "owner",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "registry",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IPayeeRegistry"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "rejectRequest",
+   "inputs": [
+    {
+     "name": "requestId",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "remainingToday",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "requestCount",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "revokeSession",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "sessionPayInvoice",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "internalType": "uint256"
+    },
+    {
+     "name": "amount",
+     "type": "uint128",
+     "internalType": "uint128"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "sessionTransfer",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "payee",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint128",
+     "internalType": "uint128"
+    },
+    {
+     "name": "ref",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "setSessionPayee",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "payee",
+     "type": "address",
+     "internalType": "address"
+    },
+    {
+     "name": "allowed",
+     "type": "bool",
+     "internalType": "bool"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "token",
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "",
+     "type": "address",
+     "internalType": "contract IERC20"
+    }
+   ],
+   "stateMutability": "view"
+  },
+  {
+   "type": "function",
+   "name": "transferOwnership",
+   "inputs": [
+    {
+     "name": "newOwner",
+     "type": "address",
+     "internalType": "address"
+    }
+   ],
+   "outputs": [],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "function",
+   "name": "validateUserOp",
+   "inputs": [
+    {
+     "name": "userOp",
+     "type": "tuple",
+     "internalType": "struct PackedUserOperation",
+     "components": [
+      {
+       "name": "sender",
+       "type": "address",
+       "internalType": "address"
+      },
+      {
+       "name": "nonce",
+       "type": "uint256",
+       "internalType": "uint256"
+      },
+      {
+       "name": "initCode",
+       "type": "bytes",
+       "internalType": "bytes"
+      },
+      {
+       "name": "callData",
+       "type": "bytes",
+       "internalType": "bytes"
+      },
+      {
+       "name": "accountGasLimits",
+       "type": "bytes32",
+       "internalType": "bytes32"
+      },
+      {
+       "name": "preVerificationGas",
+       "type": "uint256",
+       "internalType": "uint256"
+      },
+      {
+       "name": "gasFees",
+       "type": "bytes32",
+       "internalType": "bytes32"
+      },
+      {
+       "name": "paymasterAndData",
+       "type": "bytes",
+       "internalType": "bytes"
+      },
+      {
+       "name": "signature",
+       "type": "bytes",
+       "internalType": "bytes"
+      }
+     ]
+    },
+    {
+     "name": "userOpHash",
+     "type": "bytes32",
+     "internalType": "bytes32"
+    },
+    {
+     "name": "missingAccountFunds",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "outputs": [
+    {
+     "name": "validationData",
+     "type": "uint256",
+     "internalType": "uint256"
+    }
+   ],
+   "stateMutability": "nonpayable"
+  },
+  {
+   "type": "event",
+   "name": "ApprovalRequested",
+   "inputs": [
+    {
+     "name": "requestId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "limit",
+     "type": "uint8",
+     "indexed": false,
+     "internalType": "enum PaddyAccount.LimitHit"
+    },
+    {
+     "name": "payee",
+     "type": "address",
+     "indexed": false,
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "ref",
+     "type": "bytes32",
+     "indexed": false,
+     "internalType": "bytes32"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "OwnerChanged",
+   "inputs": [
+    {
+     "name": "previousOwner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "newOwner",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "OwnerExecuted",
+   "inputs": [
+    {
+     "name": "target",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "value",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "selector",
+     "type": "bytes4",
+     "indexed": false,
+     "internalType": "bytes4"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "RequestApproved",
+   "inputs": [
+    {
+     "name": "requestId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    },
+    {
+     "name": "payee",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "RequestRejected",
+   "inputs": [
+    {
+     "name": "requestId",
+     "type": "uint256",
+     "indexed": true,
+     "internalType": "uint256"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "SessionActionBlocked",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "reason",
+     "type": "uint8",
+     "indexed": false,
+     "internalType": "enum PaddyAccount.BlockReason"
+    },
+    {
+     "name": "payee",
+     "type": "address",
+     "indexed": false,
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "ref",
+     "type": "bytes32",
+     "indexed": false,
+     "internalType": "bytes32"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "SessionCreated",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "indexed": false,
+     "internalType": "string"
+    },
+    {
+     "name": "validAfter",
+     "type": "uint48",
+     "indexed": false,
+     "internalType": "uint48"
+    },
+    {
+     "name": "validUntil",
+     "type": "uint48",
+     "indexed": false,
+     "internalType": "uint48"
+    },
+    {
+     "name": "perPaymentCap",
+     "type": "uint128",
+     "indexed": false,
+     "internalType": "uint128"
+    },
+    {
+     "name": "dailyBudget",
+     "type": "uint128",
+     "indexed": false,
+     "internalType": "uint128"
+    },
+    {
+     "name": "totalBudget",
+     "type": "uint128",
+     "indexed": false,
+     "internalType": "uint128"
+    },
+    {
+     "name": "requireVerifiedPayee",
+     "type": "bool",
+     "indexed": false,
+     "internalType": "bool"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "SessionPayeeSet",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "payee",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "allowed",
+     "type": "bool",
+     "indexed": false,
+     "internalType": "bool"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "SessionPayment",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "payee",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "amount",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "invoiceId",
+     "type": "uint256",
+     "indexed": false,
+     "internalType": "uint256"
+    },
+    {
+     "name": "ref",
+     "type": "bytes32",
+     "indexed": false,
+     "internalType": "bytes32"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "event",
+   "name": "SessionRevoked",
+   "inputs": [
+    {
+     "name": "sessionKey",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    },
+    {
+     "name": "by",
+     "type": "address",
+     "indexed": true,
+     "internalType": "address"
+    }
+   ],
+   "anonymous": false
+  },
+  {
+   "type": "error",
+   "name": "CallFailed",
+   "inputs": [
+    {
+     "name": "result",
+     "type": "bytes",
+     "internalType": "bytes"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "InvalidRequest",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "InvalidSession",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "NotOwner",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "NotOwnerOrEntryPoint",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "ReentrancyGuardReentrantCall",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "RequestExpired",
+   "inputs": []
+  },
+  {
+   "type": "error",
+   "name": "SafeERC20FailedOperation",
+   "inputs": [
+    {
+     "name": "token",
+     "type": "address",
+     "internalType": "address"
+    }
+   ]
+  },
+  {
+   "type": "error",
+   "name": "ZeroAddress",
+   "inputs": []
+  }
+ ]
+}
