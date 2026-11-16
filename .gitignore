@@ -13,3 +13,4 @@ node_modules/
 dist/
 coverage/
 lcov.info
+*.recovery.lock
