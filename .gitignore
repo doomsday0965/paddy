@@ -14,3 +14,5 @@ dist/
 coverage/
 lcov.info
 *.recovery.lock
+# Runtime data (session keystore, journals, invoices)
+agent/data/

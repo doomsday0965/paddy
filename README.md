@@ -303,8 +303,8 @@ LIVE=1 OUT=../screens npm run e2e                          # phone-sized end-to-
 - `docker compose --env-file ../.env up --build` runs the bundler and the Paddy server: read-only root, all capabilities dropped, a `/data` volume, and the console published on 127.0.0.1 only.
 - `docker compose --profile demo up --build paddy-demo` runs the key-free judge demo.
 
-**Hosting (not deployed).** The simplest public option is the key-free `DEMO_MODE=1` container on a free Docker host:
-- **Render** free web service: 750 h a month, sleeps after 15 min idle, about a minute to wake, no persistent disk.
+**Hosting (not deployed yet).** The simplest public option is the key-free `DEMO_MODE=1` container on a free Docker host. This repo includes a Render Blueprint (`render.yaml`) for that mode: no secrets, live chain reads, simulated writes.
+- **Render** free web service: 750 h a month, sleeps after 15 min idle, about a minute to wake, no persistent disk. Connect this repo and apply the Blueprint at https://dashboard.render.com/blueprint/new
 - **Koyeb** free instance: 512 MB, scales to zero after 1 h idle.
 - A live-mode deployment with keys needs persistent storage for the session keystore and the bundler as a second service. That means a paid tier, or a Cloudflare Tunnel (free) to a machine running `docker compose`.
 
@@ -312,7 +312,7 @@ LIVE=1 OUT=../screens npm run e2e                          # phone-sized end-to-
 
 ```bash
 # prerequisites: Foundry (https://getfoundry.sh)
-git clone <repo> && cd paddy
+git clone https://github.com/doomsday0965/paddy && cd paddy
 forge install            # forge-std, openzeppelin-contracts v5.1.0
 forge test               # unit + fuzz + invariant tests
 AEVUM_FORK=true forge test --mc AevumForkTest -vv   # gasless payment against the REAL tUSD8 on an Aevum fork
@@ -355,6 +355,7 @@ bundler/                     minimal EntryPoint v0.7 bundler + live demo script
 agent/                       AI clerk + Paddy server: intent extraction, policy pre-check, executor, indexer, owner/pay API
 web/                         React owner console, customer pay page, judge demo (Vite); e2e/screens.mjs walkthrough
 Dockerfile, docker-compose.yml  container build (bundler + server, key-free demo profile)
+render.yaml                   Render Blueprint for the key-free DEMO_MODE demo (free plan, no secrets)
 docs/agent-live-run.json     record of the live agent run
 docs/live-demo.json          machine-readable record of the live demo
 tools/check-bytecode.py      deployed-bytecode match check

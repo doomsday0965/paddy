@@ -1,0 +1,22 @@
+# Render Blueprint: key-free public demo for judges (DEMO_MODE=1).
+# No secrets required. Live chain reads; every write is simulated.
+# Free web services sleep after 15 minutes idle and take about a minute to wake.
+# Apply from https://dashboard.render.com/blueprint/new after this repo is public.
+services:
+  - type: web
+    name: paddy-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DEMO_MODE
+        value: "1"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: RPC_URL
+        value: https://rpc-test.qday.info
+      - key: NGN_PER_USD
+        value: "1500"
