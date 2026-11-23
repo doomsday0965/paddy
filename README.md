@@ -5,6 +5,12 @@
 
 "Paddy" is Naija slang for a trusted friend. Paddy lets a small business hand its payment paperwork to an AI clerk without handing over its money.
 
+## Try the live demo
+
+**Judge demo:** [https://paddy-demo.onrender.com](https://paddy-demo.onrender.com)
+
+This is the key-free judge mode (`DEMO_MODE=1`). It reads live Aevum Testnet state, but actions are simulated and the host holds no keys. It's on Render's free plan, so the first load after a quiet spell may take about 50 seconds. Health check: [`/api/health`](https://paddy-demo.onrender.com/api/health). The in-app story at [`/demo`](https://paddy-demo.onrender.com/demo) replays the poisoned-invoice flow from real recorded transactions.
+
 ## The problem
 
 African SMEs pay suppliers and staff and chase invoices over WhatsApp and bank apps. Two things hurt them:
@@ -303,8 +309,8 @@ LIVE=1 OUT=../screens npm run e2e                          # phone-sized end-to-
 - `docker compose --env-file ../.env up --build` runs the bundler and the Paddy server: read-only root, all capabilities dropped, a `/data` volume, and the console published on 127.0.0.1 only.
 - `docker compose --profile demo up --build paddy-demo` runs the key-free judge demo.
 
-**Hosting (not deployed yet).** The simplest public option is the key-free `DEMO_MODE=1` container on a free Docker host. This repo includes a Render Blueprint (`render.yaml`) for that mode: no secrets, live chain reads, simulated writes.
-- **Render** free web service: 750 h a month, sleeps after 15 min idle, about a minute to wake, no persistent disk. Connect this repo and apply the Blueprint at https://dashboard.render.com/blueprint/new
+**Hosting.** The public judge demo is live at [https://paddy-demo.onrender.com](https://paddy-demo.onrender.com) on Render's free plan (`DEMO_MODE=1`: live chain reads, simulated writes, no secrets). Free instances sleep after about 15 minutes idle, so the first visit can take about 50 seconds to wake. Health check: [`/api/health`](https://paddy-demo.onrender.com/api/health). The Blueprint in this repo (`render.yaml`) is what that service uses.
+- **Render** free web service: 750 h a month, sleeps after 15 min idle, about 50 seconds to wake, no persistent disk. To redeploy, connect this repo and apply the Blueprint at https://dashboard.render.com/blueprint/new
 - **Koyeb** free instance: 512 MB, scales to zero after 1 h idle.
 - A live-mode deployment with keys needs persistent storage for the session keystore and the bundler as a second service. That means a paid tier, or a Cloudflare Tunnel (free) to a machine running `docker compose`.
 
