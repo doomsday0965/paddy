@@ -14,9 +14,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - uses: gitleaks/gitleaks-action@v2
-        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        with:
+          fetch-depth: 0
+      # Install and run gitleaks ourselves so the first push (and any range
+      # whose left side is a root commit) cannot fail on `<root>^..HEAD`.
+      # A full-history detect is at least as strong as the action's range scan.
+      - name: Install gitleaks
+        run: |
+          set -euo pipefail
+          VER=8.24.3
+          ARCHIVE="gitleaks_${VER}_linux_x64.tar.gz"
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${VER}/${ARCHIVE}" -o "/tmp/${ARCHIVE}"
+          echo "9991e0b2903da4c8f6122b5c3186448b927a5da4deef1fe45271c3793f4ee29c  /tmp/${ARCHIVE}" | sha256sum -c
+          sudo tar -xzf "/tmp/${ARCHIVE}" -C /usr/local/bin gitleaks
+          gitleaks version
+      - name: Scan full git history
+        run: |
+          set -euo pipefail
+          gitleaks detect --source . --verbose --redact --exit-code=1
   typescript:
     runs-on: ubuntu-latest
     steps:

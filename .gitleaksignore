@@ -1,0 +1,4 @@
+# Public 20-byte Ethereum session-key address recorded in the live-run receipt
+# (docs/agent-live-run.json). This is an on-chain address, not a private key.
+# Fingerprint: commit:path:rule:line where the value was introduced.
+275db89191b9f9ff9162d0ca0e0468cae533c1fe:docs/agent-live-run.json:generic-api-key:5
