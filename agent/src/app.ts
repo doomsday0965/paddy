@@ -89,6 +89,7 @@ const MIME: Record<string, string> = {
   ".json": "application/json",
   ".webmanifest": "application/manifest+json",
   ".txt": "text/plain; charset=utf-8",
+  ".mp4": "video/mp4",
 };
 const CSP = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
 
@@ -236,15 +237,21 @@ export function createApp(svc: Services, opts: AppOptions) {
     throw new HttpError(404, "not found");
   }
 
-  function serveStatic(path: string, res: ServerResponse): boolean {
+  function serveStatic(path: string, res: ServerResponse, method: string): boolean {
     if (!opts.staticDir || !existsSync(opts.staticDir)) return false;
     const safe = normalize(decodeURIComponent(path)).replace(/^(\.\.[/\\])+/, "");
     let file = join(opts.staticDir, safe);
     if (!file.startsWith(opts.staticDir)) return false;
     if (!existsSync(file) || statSync(file).isDirectory()) file = join(opts.staticDir, "index.html"); // SPA fallback
     if (!existsSync(file)) return false;
+    const size = statSync(file).size;
     res.setHeader("content-type", MIME[extname(file)] ?? "application/octet-stream");
+    res.setHeader("content-length", String(size));
     res.setHeader("cache-control", file.includes(`${"/"}assets${"/"}`) ? "public, max-age=31536000, immutable" : "no-cache");
+    if (method === "HEAD") {
+      res.end();
+      return true;
+    }
     res.end(readFileSync(file));
     return true;
   }
@@ -272,7 +279,7 @@ export function createApp(svc: Services, opts: AppOptions) {
       }
       return;
     }
-    if ((method === "GET" || method === "HEAD") && serveStatic(url.pathname, res)) return;
+    if ((method === "GET" || method === "HEAD") && serveStatic(url.pathname, res, method)) return;
     res.statusCode = 404;
     res.end("not found");
   };

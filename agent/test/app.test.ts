@@ -147,6 +147,16 @@ test("static: security headers, SPA fallback, no path traversal", async () => {
     assert.equal(r.headers.get("x-frame-options"), "DENY");
     const js = await fetch(`${url}/assets/a.js`);
     assert.match(js.headers.get("cache-control")!, /immutable/);
+    writeFileSync(join(dir, "paddy-demo.mp4"), Buffer.from("ftypisomfake"));
+    const mp4 = await fetch(`${url}/paddy-demo.mp4`);
+    assert.equal(mp4.headers.get("content-type"), "video/mp4");
+    assert.equal(mp4.headers.get("content-length"), "12");
+    assert.equal(Buffer.from(await mp4.arrayBuffer()).toString(), "ftypisomfake");
+    const head = await fetch(`${url}/paddy-demo.mp4`, { method: "HEAD" });
+    assert.equal(head.status, 200);
+    assert.equal(head.headers.get("content-type"), "video/mp4");
+    assert.equal(head.headers.get("content-length"), "12");
+    assert.equal((await head.arrayBuffer()).byteLength, 0);
     const trav = await fetch(`${url}/..%2f..%2f..%2fetc%2fpasswd`);
     assert.ok(!(await trav.text()).includes("root:"), "no traversal");
   } finally {

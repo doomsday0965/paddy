@@ -11,7 +11,7 @@
 
 This is the key-free judge mode (`DEMO_MODE=1`). It reads live Aevum Testnet state, but actions are simulated and the host holds no keys. It's on Render's free plan, so the first load after a quiet spell may take about 50 seconds. Health check: [`/api/health`](https://paddy-demo.onrender.com/api/health). The in-app story at [`/demo`](https://paddy-demo.onrender.com/demo) replays the poisoned-invoice flow from real recorded transactions.
 
-**Demo video** (2 min 19 s, no voiceover, captions on screen): [download](https://github.com/doomsday0965/paddy/releases/download/v1.0-aevum/paddy-demo.mp4) · [`docs/paddy-demo.mp4`](docs/paddy-demo.mp4)
+**Demo video** (2 min 19 s, no voiceover, captions on screen): [https://paddy-demo.onrender.com/paddy-demo.mp4](https://paddy-demo.onrender.com/paddy-demo.mp4) (direct `.mp4`). Copies also live at [`docs/paddy-demo.mp4`](docs/paddy-demo.mp4) and in the [`v1.0-aevum` release](https://github.com/doomsday0965/paddy/releases/download/v1.0-aevum/paddy-demo.mp4).
 
 ## The problem
 
